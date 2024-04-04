@@ -1,6 +1,7 @@
 package jobshop.solvers.neighborhood;
 
 import jobshop.encodings.ResourceOrder;
+import jobshop.encodings.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,14 +125,53 @@ public class Nowicki extends Neighborhood {
         return neighbors;
     }
 
+    private int FindTaskIndex (ResourceOrder order, int machine, Task task){
+
+        int trouver = 0;
+        while (!(order.getTaskOfMachine(machine,trouver)==task)){
+            trouver++;
+        }
+
+        return trouver;
+    }
+
     /** Returns a list of all the blocks of the critical path. */
     List<Block> blocksOfCriticalPath(ResourceOrder order) {
-        throw new UnsupportedOperationException();
+        List<Task> chemin = order.toSchedule().get().criticalPath();
+
+        Task task = chemin.get(0);
+        int machine = order.instance.machine(task.job,task.task);
+        int debut = 0;
+        int fin =0;
+
+        List<Block> out = new ArrayList<>();
+
+        for (Task t : chemin){
+
+            int machine_tmp = order.instance.machine(t.job,t.task);
+            if (machine_tmp==machine){
+                fin = FindTaskIndex(order, machine, t);
+            }else{
+                out.add(new Block(machine,debut,fin));
+
+                machine = machine_tmp;
+                debut = FindTaskIndex(order, machine_tmp, t);
+            }
+        }
+
+        return out;
+
     }
 
     /** For a given block, return the possible swaps for the Nowicki and Smutnicki neighborhood */
     List<Swap> neighbors(Block block) {
-        throw new UnsupportedOperationException();
+        List<Swap> out = new ArrayList<>();
+
+        out.add(new Swap(block.machine, block.firstTask, block.firstTask+1));
+        if(block.firstTask!=block.lastTask+1){
+            out.add(new Swap(block.machine, block.lastTask-1, block.lastTask));
+        }
+        return out;
     }
 
 }
