@@ -27,4 +27,6 @@ public interface Solver {
         }
     }
 
+    public void setRandom(boolean random);
+
 }

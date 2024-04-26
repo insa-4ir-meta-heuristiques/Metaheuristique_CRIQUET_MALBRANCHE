@@ -18,7 +18,7 @@ public class GreedySolver implements Solver {
 
     /** Priority that the solver should use. */
     final Priority priority;
-
+    private boolean random ;
     private int [] jobs_end;
     private int [] machine_end;
 
@@ -184,6 +184,8 @@ public class GreedySolver implements Solver {
         return out;
     }
 
+
+
     private int select_radom(int [] possible, int max){
         int nb = 0;
         for(int jobNumber = 0 ; jobNumber<possible.length ; jobNumber++) {
@@ -205,10 +207,13 @@ public class GreedySolver implements Solver {
         return index;
     }
 
+    public void setRandom(boolean random){
+        this.random=random;
+    }
     @Override
     public Optional<Schedule> solve(Instance instance, long deadline) {
 
-        boolean random = true; // modification rapide de l'utilisation de random
+         // modification rapide de l'utilisation de random
         Optional<Schedule> sol = solveur(instance,random);
 
         if (random){

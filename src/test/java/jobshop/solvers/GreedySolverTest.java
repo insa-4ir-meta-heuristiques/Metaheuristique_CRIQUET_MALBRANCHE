@@ -14,6 +14,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.SPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -32,6 +33,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.LPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -50,6 +52,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.SRPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -68,6 +71,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.LRPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -86,6 +90,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.EST_SPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -103,6 +108,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.EST_LPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -121,6 +127,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.EST_SRPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";
@@ -139,6 +146,7 @@ public class GreedySolverTest extends TestCase {
         Instance instance = Instance.fromFile(Paths.get("instances/aaa3"));
 
         Solver solver = new GreedySolver(GreedySolver.Priority.EST_LRPT);
+        solver.setRandom(false);
         Optional<Schedule> result = solver.solve(instance, System.currentTimeMillis() + 10);
 
         assert result.isPresent() : "The solver did not find a solution";

@@ -88,7 +88,9 @@ public class Nowicki extends Neighborhood {
          *  The original ResourceOrder MUST NOT be modified by this operation.
          */
         public ResourceOrder generateFrom(ResourceOrder original) {
-            throw new UnsupportedOperationException();
+            ResourceOrder plagiat = original.copy();
+            plagiat.swapTasks(machine,t1,t2);
+            return plagiat;
         }
 
         @Override
@@ -128,10 +130,9 @@ public class Nowicki extends Neighborhood {
     private int FindTaskIndex (ResourceOrder order, int machine, Task task){
 
         int trouver = 0;
-        while (!(order.getTaskOfMachine(machine,trouver)==task)){
+        while (!(order.getTaskOfMachine(machine, trouver).equals(task))){
             trouver++;
         }
-
         return trouver;
     }
 
@@ -150,13 +151,20 @@ public class Nowicki extends Neighborhood {
 
             int machine_tmp = order.instance.machine(t.job,t.task);
             if (machine_tmp==machine){
+
                 fin = FindTaskIndex(order, machine, t);
             }else{
-                out.add(new Block(machine,debut,fin));
+                if (debut<fin){
+                    out.add(new Block(machine,debut,fin));
+                }
 
                 machine = machine_tmp;
                 debut = FindTaskIndex(order, machine_tmp, t);
             }
+        }
+
+        if (debut<fin){
+            out.add(new Block(machine,debut,fin));
         }
 
         return out;
