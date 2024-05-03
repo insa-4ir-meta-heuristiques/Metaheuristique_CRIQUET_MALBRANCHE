@@ -12,4 +12,5 @@ public abstract class Neighborhood {
     /** Generates all neighbors for the current solution.  */
     public abstract List<ResourceOrder> generateNeighbors(ResourceOrder current);
 
+
 }

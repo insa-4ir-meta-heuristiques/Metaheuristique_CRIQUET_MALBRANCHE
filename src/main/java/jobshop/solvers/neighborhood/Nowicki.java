@@ -1,5 +1,6 @@
 package jobshop.solvers.neighborhood;
 
+import jobshop.encodings.PairTask;
 import jobshop.encodings.ResourceOrder;
 import jobshop.encodings.Task;
 
@@ -112,7 +113,18 @@ public class Nowicki extends Neighborhood {
     public List<ResourceOrder> generateNeighbors(ResourceOrder current) {
         // convert the list of swaps into a list of neighbors (function programming FTW)
         return allSwaps(current).stream().map(swap -> swap.generateFrom(current)).collect(Collectors.toList());
+    }
 
+
+    public List<PairRessourceOrderPairTask> generateNeighborsTaboo(ResourceOrder current,  PairTask[] tab ) {
+        // convert the list of swaps into a list of neighbors (function programming FTW)
+        List<Swap> list = allSwapsTaboo(current, tab);
+        List<PairRessourceOrderPairTask> out = new ArrayList<>();
+
+        for(var swap : list){
+            out.add(new PairRessourceOrderPairTask(swap.generateFrom(current), swapToPair(current, swap)));
+        }
+        return out;
     }
 
     /** Generates all swaps of the given ResourceOrder.
@@ -123,6 +135,38 @@ public class Nowicki extends Neighborhood {
         for(var block : blocksOfCriticalPath(current)) {
             // for this block, compute all neighbors and add them to the list of neighbors
             neighbors.addAll(neighbors(block));
+        }
+        return neighbors;
+    }
+    private PairTask swapToPair(ResourceOrder current,Swap swap){
+        return new PairTask (current.getTaskOfMachine(swap.machine,swap.t1), current.getTaskOfMachine(swap.machine,swap.t2));
+    }
+
+    public List<Swap> allSwapsTaboo(ResourceOrder current, PairTask[] tab ) {
+        List<Swap> neighbors = new ArrayList<>();
+        // iterate over all blocks of the critical path
+        for(var block : blocksOfCriticalPath(current)) {
+            // for this block, compute all neighbors and add them to the list of neighbors
+            neighbors.addAll(neighbors(block));
+        }
+
+        for(int index =0 ; index < tab.length; index++){
+            if (tab[index]!=null) {
+                List<Swap> listIndex = new ArrayList<>();
+
+                for(int i =0; i < neighbors.size(); i++){
+                    PairTask pairTask = swapToPair(current,neighbors.get(i));
+
+                    if (Objects.equals(pairTask.toString(), tab[index].toString())) {
+                        listIndex.add(neighbors.get(i));
+                    }
+                }
+
+                for (var i : listIndex){
+                    neighbors.remove(i);
+                }
+            }
+
         }
         return neighbors;
     }
