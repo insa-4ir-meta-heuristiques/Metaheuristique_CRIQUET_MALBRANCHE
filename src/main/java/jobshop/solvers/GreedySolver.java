@@ -268,14 +268,10 @@ public class GreedySolver implements Solver {
             sol.addTaskToMachine(instance.machine(selection, possible[selection]), new Task(selection,possible[selection]));
 
             int machine = instance.machine(selection, possible[selection]);
-            machine_end[machine]+= instance.duration(selection, possible[selection]);
-            jobs_end[selection]+= instance.duration(selection, possible[selection]);
+            int max = Math.max(jobs_end[selection], machine_end[machine];
 
-            if(machine_end[machine]> jobs_end[selection]){
-                jobs_end[selection] =  machine_end[machine];
-            }else {
-                machine_end[machine] = jobs_end[selection];
-            }
+            machine_end[machine]=  max + instance.duration(selection, possible[selection]);
+            jobs_end[selection]+= machine_end[machine];
 
 
             possible[selection] ++;
