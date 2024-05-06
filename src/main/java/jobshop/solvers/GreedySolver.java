@@ -234,12 +234,17 @@ public class GreedySolver implements Solver {
 
     private  Optional<Schedule> solveur(Instance instance, boolean random) {
 
+        // C'est tableau nous servent pour l'éxecution des heuristique EST
         jobs_end = new int[instance.numJobs];
         machine_end = new int[instance.numMachines];
 
         for (int machineNumber = 0; machineNumber < instance.numMachines; machineNumber++){
             machine_end[machineNumber]=0;
         }
+        for(int jobNumber = 0 ; jobNumber<instance.numJobs ; jobNumber++) {
+            jobs_end[jobNumber]=0;
+        }
+
 
         ResourceOrder sol = new ResourceOrder(instance);
         int [] possible = new int [instance.numJobs];
@@ -248,9 +253,6 @@ public class GreedySolver implements Solver {
         for(int jobNumber = 0 ; jobNumber<instance.numJobs ; jobNumber++) {
             // On init le tableau qui retient à quelle tache on en est pour chaque job
             possible[jobNumber]=0;
-
-            // On se sert de la même boucle pour init un tableau est
-            jobs_end[jobNumber]=0;
         }
 
         Random randomGene = new Random();
