@@ -268,7 +268,7 @@ public class GreedySolver implements Solver {
             sol.addTaskToMachine(instance.machine(selection, possible[selection]), new Task(selection,possible[selection]));
 
             int machine = instance.machine(selection, possible[selection]);
-            int max = Math.max(jobs_end[selection], machine_end[machine];
+            int max = Math.max(jobs_end[selection], machine_end[machine]);
 
             machine_end[machine]=  max + instance.duration(selection, possible[selection]);
             jobs_end[selection]+= machine_end[machine];
