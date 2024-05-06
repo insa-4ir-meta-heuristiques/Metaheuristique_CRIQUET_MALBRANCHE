@@ -174,11 +174,11 @@ public class GreedySolver implements Solver {
     }
 
     private boolean fini (int [] possible, int max ){
-        boolean out = false;
+        boolean out = true;
 
         for(int jobNumber = 0 ; jobNumber<possible.length ; jobNumber++) {
             if (possible[jobNumber]< max){
-                out = true;
+                out = false;
             }
         }
         return out;
@@ -255,14 +255,13 @@ public class GreedySolver implements Solver {
 
         Random randomGene = new Random();
 
-        while (fini(possible, instance.numTasks)) {
+        while (!fini(possible, instance.numTasks)) {
 
             if (randomGene.nextInt(100)< 5 && random){  // POUR L'AJOUT D'ALÉATOIRE À DÉSACTIVER POUR TEST
                 selection = select_radom(possible, instance.numTasks);
             }else {
                 selection = myComparator(possible, instance);
             }
-
 
             sol.addTaskToMachine(instance.machine(selection, possible[selection]), new Task(selection,possible[selection]));
 
