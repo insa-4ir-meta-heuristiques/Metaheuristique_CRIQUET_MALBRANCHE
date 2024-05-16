@@ -2,7 +2,11 @@ package jobshop.solvers;
 
 import jobshop.Instance;
 import jobshop.encodings.Schedule;
+import jobshop.solvers.neighborhood.Neighborhood;
+import jobshop.solvers.neighborhood.Nowicki;
 
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /** Common interface that must implemented by all solvers. */
@@ -25,6 +29,35 @@ public interface Solver {
             case "lrpt": return new GreedySolver(GreedySolver.Priority.LRPT);
             case "est-spt": return new GreedySolver(GreedySolver.Priority.EST_SPT);
             case "est-lrpt": return new GreedySolver(GreedySolver.Priority.EST_LRPT);
+
+            case "taboo":
+                Nowicki neighborhood = new Nowicki();
+
+                ArrayList<Solver> list = new ArrayList<>();
+
+                Solver solver = new GreedySolver(GreedySolver.Priority.EST_SPT);
+                solver.setRandom(true);
+                list.add(solver);
+
+                solver = new GreedySolver(GreedySolver.Priority.EST_LRPT);
+                solver.setRandom(true);
+                list.add(solver);
+
+                solver = new GreedySolver(GreedySolver.Priority.LRPT);
+                solver.setRandom(true);
+                list.add(solver);
+
+                solver = new GreedySolver(GreedySolver.Priority.SRPT);
+                solver.setRandom(true);
+                list.add(solver);
+
+                solver = new GreedySolver(GreedySolver.Priority.LPT);
+                solver.setRandom(true);
+                list.add(solver);
+
+
+
+                return new TabooSolver(neighborhood,list,300, 5);
 
 
             // TODO: add new solvers
