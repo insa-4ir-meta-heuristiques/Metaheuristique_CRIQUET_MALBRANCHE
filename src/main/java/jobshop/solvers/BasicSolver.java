@@ -31,4 +31,9 @@ public class BasicSolver implements Solver {
         // Convert the resource order into a schedule and return it
         return sol.toSchedule();
     }
+
+    @Override
+    public void setRandom(boolean random){
+
+    }
 }

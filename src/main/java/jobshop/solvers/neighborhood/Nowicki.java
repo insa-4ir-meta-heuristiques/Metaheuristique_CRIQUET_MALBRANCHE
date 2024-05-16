@@ -1,6 +1,8 @@
 package jobshop.solvers.neighborhood;
 
+import jobshop.encodings.PairTask;
 import jobshop.encodings.ResourceOrder;
+import jobshop.encodings.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +89,9 @@ public class Nowicki extends Neighborhood {
          *  The original ResourceOrder MUST NOT be modified by this operation.
          */
         public ResourceOrder generateFrom(ResourceOrder original) {
-            throw new UnsupportedOperationException();
+            ResourceOrder plagiat = original.copy();
+            plagiat.swapTasks(machine,t1,t2);
+            return plagiat;
         }
 
         @Override
@@ -109,7 +113,18 @@ public class Nowicki extends Neighborhood {
     public List<ResourceOrder> generateNeighbors(ResourceOrder current) {
         // convert the list of swaps into a list of neighbors (function programming FTW)
         return allSwaps(current).stream().map(swap -> swap.generateFrom(current)).collect(Collectors.toList());
+    }
 
+
+    public List<PairRessourceOrderPairTask> generateNeighborsTaboo(ResourceOrder current,  PairTask[] tab ) {
+        // convert the list of swaps into a list of neighbors (function programming FTW)
+        List<Swap> list = allSwapsTaboo(current, tab);
+        List<PairRessourceOrderPairTask> out = new ArrayList<>();
+
+        for(var swap : list){
+            out.add(new PairRessourceOrderPairTask(swap.generateFrom(current), swapToPair(current, swap)));
+        }
+        return out;
     }
 
     /** Generates all swaps of the given ResourceOrder.
@@ -123,15 +138,92 @@ public class Nowicki extends Neighborhood {
         }
         return neighbors;
     }
+    private PairTask swapToPair(ResourceOrder current,Swap swap){
+        return new PairTask (current.getTaskOfMachine(swap.machine,swap.t1), current.getTaskOfMachine(swap.machine,swap.t2));
+    }
+
+    public List<Swap> allSwapsTaboo(ResourceOrder current, PairTask[] tab ) {
+        List<Swap> neighbors = new ArrayList<>();
+        // iterate over all blocks of the critical path
+        for(var block : blocksOfCriticalPath(current)) {
+            // for this block, compute all neighbors and add them to the list of neighbors
+            neighbors.addAll(neighbors(block));
+        }
+
+        for(int index =0 ; index < tab.length; index++){
+            if (tab[index]!=null) {
+                List<Swap> listIndex = new ArrayList<>();
+
+                for(int i =0; i < neighbors.size(); i++){
+                    PairTask pairTask = swapToPair(current,neighbors.get(i));
+
+                    if (Objects.equals(pairTask.toString(), tab[index].toString())) {
+                        listIndex.add(neighbors.get(i));
+                    }
+                }
+
+                for (var i : listIndex){
+                    neighbors.remove(i);
+                }
+            }
+
+        }
+        return neighbors;
+    }
+
+    private int FindTaskIndex (ResourceOrder order, int machine, Task task){
+
+        int trouver = 0;
+        while (!(order.getTaskOfMachine(machine, trouver).equals(task))){
+            trouver++;
+        }
+        return trouver;
+    }
 
     /** Returns a list of all the blocks of the critical path. */
     List<Block> blocksOfCriticalPath(ResourceOrder order) {
-        throw new UnsupportedOperationException();
+        List<Task> chemin = order.toSchedule().get().criticalPath();
+
+        Task task = chemin.get(0);
+        int machine = order.instance.machine(task.job,task.task);
+        int debut = 0;
+        int fin =0;
+
+        List<Block> out = new ArrayList<>();
+
+        for (Task t : chemin){
+
+            int machine_tmp = order.instance.machine(t.job,t.task);
+            if (machine_tmp==machine){
+
+                fin = FindTaskIndex(order, machine, t);
+            }else{
+                if (debut<fin){
+                    out.add(new Block(machine,debut,fin));
+                }
+
+                machine = machine_tmp;
+                debut = FindTaskIndex(order, machine_tmp, t);
+            }
+        }
+
+        if (debut<fin){
+            out.add(new Block(machine,debut,fin));
+        }
+
+        return out;
+
     }
 
     /** For a given block, return the possible swaps for the Nowicki and Smutnicki neighborhood */
     List<Swap> neighbors(Block block) {
-        throw new UnsupportedOperationException();
+        List<Swap> out = new ArrayList<>();
+
+        out.add(new Swap(block.machine, block.firstTask, block.firstTask+1));
+        if(block.firstTask!=block.lastTask+1){
+            out.add(new Swap(block.machine, block.lastTask-1, block.lastTask));
+        }
+        return out;
     }
 
 }
